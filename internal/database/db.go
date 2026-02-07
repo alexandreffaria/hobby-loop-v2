@@ -2,7 +2,7 @@ package database
 
 import (
 	"log"
-	"subscription-market/internal/models"
+	"hobby-loop/m/internal/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
