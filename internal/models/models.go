@@ -16,25 +16,26 @@ type User struct {
 // Basket
 type Basket struct {
 	gorm.Model
-	SellerID uint `json:"seller_id"`
-	Name string `json:name`
-	Description string `json:description`
-	Price float64 `json:price`
-	Interval string `json:"interval"`
+	SellerID 			uint `json:"seller_id"`
+	Name 				string `json:name`
+	Description 		string `json:description`
+	Price 				float64 `json:price`
+	Interval 			string `json:"interval"`
 }
 
 // Subscription
 type Subscription struct{
 	gorm.Model
-	UserID uint `json:"user_id"`
-	BasketID uint `json:"basket_id"`
-	Status string `json:"status"`
-	NextDeliveryDate time.Time `json:"next_delivery_date"`
+	UserID 				uint `json:"user_id"`
+	BasketID 			uint `json:"basket_id"`
+	Status 				string `json:"status"`
+	NextDeliveryDate 	time.Time `json:"next_delivery_date"`
 }
 
+// Order
 type Order struct {
 	gorm.Model
-	SubscriptionID uint `json:"subscription_id"` 
-	AmountPaid float64 `json:"amount_paid"`
-	Status string `json:"status"`
+	SubscriptionID 		uint `json:"subscription_id"` 
+	AmountPaid 			float64 `json:"amount_paid"`
+	Status 				string `json:"status"`
 }
