@@ -3,12 +3,17 @@ package main
 import (
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/handlers"
+	"hobby-loop/m/internal/worker"
+
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	// Connect to the database
 	database.Connect()
+
+	// Start the background worker
+	worker.Start()
 
 	// Initialize Gin router
 	router := gin.Default()
@@ -23,7 +28,7 @@ func main() {
 	})
 
 	router.POST("/baskets", handlers.CreateBasket)
-	
+
 	router.POST("/subscriptions", handlers.SubscribeToBasket)
 
 	// Start the server
