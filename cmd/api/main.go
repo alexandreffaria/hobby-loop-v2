@@ -23,6 +23,8 @@ func main() {
 	})
 
 	router.POST("/baskets", handlers.CreateBasket)
+	
+	router.POST("/subscriptions", handlers.SubscribeToBasket)
 
 	// Start the server
 	router.Run(":8080")
