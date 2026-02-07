@@ -31,6 +31,8 @@ func main() {
 
 	router.POST("/subscriptions", handlers.SubscribeToBasket)
 
+	router.GET("/orders", handlers.GetOrders)
+
 	// Start the server
 	router.Run(":8080")
 }
