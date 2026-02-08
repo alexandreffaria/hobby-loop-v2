@@ -61,3 +61,16 @@ func emitInvoice(orderID uint) {
 
 	log.Printf("Invoice emitted for order %d: Key=%s, URL=%s", order.ID, order.InvoiceKey, order.InvoiceURL)
 }
+
+func calculateNextDeliveryDate(current time.Time, interval string) time.Time {
+	switch interval {
+	case "weekly":
+		return current.AddDate(0, 0, 7)
+	case "biweekly":
+		return current.AddDate(0, 0, 14)
+	case "monthly":
+		return current.AddDate(0, 1, 0)
+	default:
+		return current.AddDate(0, 1, 0) // Default to monthly
+	}
+}
