@@ -1,10 +1,10 @@
 package worker
 
 import (
-	"log"
-	"time"
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/models"
+	"log"
+	"time"
 )
 
 func Start() {
@@ -28,7 +28,7 @@ func ProcessSubscriptions() {
 		// Fetch basket details
 		var basket models.Basket
 		database.DB.First(&basket, sub.BasketID)
-		
+
 		// Create order
 		order := models.Order{
 			SubscriptionID: sub.ID,
@@ -49,7 +49,7 @@ func ProcessSubscriptions() {
 func emitInvoice(orderID uint) {
 	// Simulate delay for invoice emission
 	time.Sleep(5 * time.Second)
-	
+
 	var order models.Order
 	database.DB.First(&order, orderID)
 

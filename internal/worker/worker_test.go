@@ -1,18 +1,18 @@
 package worker_test
 
 import (
-	"testing"
-	"time"
+	"github.com/stretchr/testify/assert"
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/models"
 	"hobby-loop/m/internal/worker" // Import the worker package
-	"github.com/stretchr/testify/assert"
+	"testing"
+	"time"
 )
 
 func TestProcessSubscriptions_GeneratesOrder(t *testing.T) {
 	// 1. Setup
 	database.Connect()
-	
+
 	// Clean slate
 	database.DB.Exec("DELETE FROM orders")
 	database.DB.Exec("DELETE FROM subscriptions")

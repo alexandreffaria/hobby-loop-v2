@@ -1,23 +1,37 @@
 package handlers
 
 import (
-	"net/http"
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/models"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/klassmann/cpfcnpj"
 )
 
+// Input struct to match the JSON payload exactly
+type RegisterInput struct {
+	Email        string `json:"email" binding:"required"`
+	Password     string `json:"password" binding:"required"`
+	FullName     string `json:"full_name" binding:"required"`
+	DocumentType string `json:"document_type" binding:"required"`
+	Document     string `json:"document" binding:"required"`
+	IsSeller     bool   `json:"is_seller"`
+
+	// Nested Address struct
+	Address struct {
+		Street       string `json:"street"`
+		Number       string `json:"number"`
+		Complement   string `json:"complement"`
+		Neighborhood string `json:"neighborhood"`
+		City         string `json:"city"`
+		State        string `json:"state"`
+		ZipCode      string `json:"zip_code"`
+	} `json:"address"`
+}
+
 func RegisterUser(c *gin.Context) {
-	var input struct {
-		Email        string `json:"email" binding:"required"`
-		Password     string `json:"password" binding:"required"`
-		FullName     string `json:"full_name" binding:"required"`
-		DocumentType string `json:"document_type" binding:"required"`
-		Document     string `json:"document" binding:"required"`
-		IsSeller     bool   `json:"is_seller"`
-	}
+	var input RegisterInput
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -31,29 +45,38 @@ func RegisterUser(c *gin.Context) {
 		isValid = cpfcnpj.ValidateCPF(cleanDocument)
 	} else if input.DocumentType == "CNPJ" {
 		isValid = cpfcnpj.ValidateCNPJ(cleanDocument)
-	} 
+	}
 
 	if !isValid {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid document"})
 		return
 	}
-	
-	// Validate document
-	user := models.User{
-		Email: input.Email,
-		Password: input.Password,
-		FullName: input.FullName,
-		DocumentType: input.DocumentType,
-		Document: cleanDocument,
-		IsSeller: input.IsSeller,
-	}
 
+	// Validate document
+	// Create User AND Address in one go
+	user := models.User{
+		Email:        input.Email,
+		Password:     input.Password, // In prod: hash this!
+		FullName:     input.FullName,
+		DocumentType: input.DocumentType,
+		Document:     cleanDocument,
+		IsSeller:     input.IsSeller,
+		Addresses: []models.Address{
+			{
+				Street:       input.Address.Street,
+				Number:       input.Address.Number,
+				Complement:   input.Address.Complement,
+				Neighborhood: input.Address.Neighborhood,
+				City:         input.Address.City,
+				State:        input.Address.State,
+				ZipCode:      input.Address.ZipCode,
+			},
+		},
+	}
 	if result := database.DB.Create(&user); result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
-
-
 
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 }

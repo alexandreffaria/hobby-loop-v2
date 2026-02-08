@@ -1,16 +1,16 @@
 package handlers
 
 import (
-	"net/http"
-	"time"
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/models"
+	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type SubscribeInput struct {
-	UserID uint `json:"user_id" binding:"required"`
+	UserID   uint `json:"user_id" binding:"required"`
 	BasketID uint `json:"basket_id" binding:"required"`
 }
 
@@ -25,10 +25,10 @@ func SubscribeToBasket(c *gin.Context) {
 
 	// Prepare subscription data
 	subscription := models.Subscription{
-		UserID: input.UserID,
-		BasketID: input.BasketID,
-		Status: "active",
-		NextDeliveryDate: time.Now(), 
+		UserID:           input.UserID,
+		BasketID:         input.BasketID,
+		Status:           "active",
+		NextDeliveryDate: time.Now(),
 	}
 
 	// Save subscription to database

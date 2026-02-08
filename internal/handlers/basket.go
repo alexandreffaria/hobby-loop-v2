@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"net/http"
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/models"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )

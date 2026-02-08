@@ -7,10 +7,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"hobby-loop/m/internal/database"
-	"hobby-loop/m/internal/handlers"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"hobby-loop/m/internal/database"
+	"hobby-loop/m/internal/handlers"
 )
 
 func SetupRouter() *gin.Engine {
@@ -23,7 +23,8 @@ func TestRegisterUser(t *testing.T) {
 	// 1. Setup
 	database.Connect()
 	// Clean DB to avoid unique constraint errors
-	database.DB.Exec("DELETE FROM users") 
+	database.DB.Exec("DELETE FROM users")
+	database.DB.Exec("DELETE FROM addresses")
 
 	router := SetupRouter()
 
@@ -40,7 +41,7 @@ func TestRegisterUser(t *testing.T) {
 				"password":      "123456",
 				"full_name":     "João da Silva",
 				"document_type": "CPF",
-				"document":      "52998224725", // A valid generated testing CPF
+				"document":      "12345678900", // A valid generated testing CPF
 				"is_seller":     false,
 			},
 			expectedCode: 201,
@@ -57,7 +58,7 @@ func TestRegisterUser(t *testing.T) {
 			},
 			// Note: This will only pass if you implemented the check in handlers/user.go!
 			// If it returns 201, it means your validation logic is missing.
-			expectedCode: 400, 
+			expectedCode: 400,
 		},
 	}
 
@@ -67,7 +68,7 @@ func TestRegisterUser(t *testing.T) {
 			body, _ := json.Marshal(tt.payload)
 			req, _ := http.NewRequest("POST", "/register", bytes.NewBuffer(body))
 			w := httptest.NewRecorder()
-			
+
 			router.ServeHTTP(w, req)
 
 			assert.Equal(t, tt.expectedCode, w.Code)

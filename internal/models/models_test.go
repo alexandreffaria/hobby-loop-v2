@@ -1,10 +1,10 @@
 package models_test
 
 import (
-	"testing"
-	"hobby-loop/m/internal/models"
-	"hobby-loop/m/internal/database"
 	"github.com/stretchr/testify/assert"
+	"hobby-loop/m/internal/database"
+	"hobby-loop/m/internal/models"
+	"testing"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -12,7 +12,7 @@ func TestCreateUser(t *testing.T) {
 	database.Connect()
 
 	database.DB.Exec("DELETE FROM users") // Clean up before test
-	
+
 	user := models.User{
 		Email:    "test@example.com",
 		Password: "securepassword",

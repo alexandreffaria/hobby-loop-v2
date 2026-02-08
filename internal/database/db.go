@@ -1,8 +1,8 @@
 package database
 
 import (
-	"log"
 	"hobby-loop/m/internal/models"
+	"log"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

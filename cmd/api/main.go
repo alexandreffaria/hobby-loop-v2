@@ -3,8 +3,8 @@ package main
 import (
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/handlers"
-	"hobby-loop/m/internal/worker"
 	"hobby-loop/m/internal/models"
+	"hobby-loop/m/internal/worker"
 
 	"github.com/gin-gonic/gin"
 )
