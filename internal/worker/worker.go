@@ -12,12 +12,12 @@ func Start() {
 
 	go func() {
 		for range ticker.C {
-			processSubscriptions()
+			ProcessSubscriptions()
 		}
 	}()
 }
 
-func processSubscriptions() {
+func ProcessSubscriptions() {
 	var subs []models.Subscription
 	now := time.Now()
 

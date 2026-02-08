@@ -9,7 +9,6 @@ import (
 
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/handlers"
-	"hobby-loop/m/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )

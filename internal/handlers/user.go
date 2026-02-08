@@ -23,6 +23,20 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	cleanDocument := cpfcnpj.Clean(input.Document)
+	isValid := false
+
+	if input.DocumentType == "CPF" {
+		isValid = cpfcnpj.ValidateCPF(cleanDocument)
+	} else if input.DocumentType == "CNPJ" {
+		isValid = cpfcnpj.ValidateCNPJ(cleanDocument)
+	} 
+
+	if !isValid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid document"})
+		return
+	}
 	
 	// Validate document
 	user := models.User{
@@ -30,7 +44,7 @@ func RegisterUser(c *gin.Context) {
 		Password: input.Password,
 		FullName: input.FullName,
 		DocumentType: input.DocumentType,
-		Document: input.Document,
+		Document: cleanDocument,
 		IsSeller: input.IsSeller,
 	}
 
@@ -38,6 +52,8 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
 	}
+
+
 
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 }

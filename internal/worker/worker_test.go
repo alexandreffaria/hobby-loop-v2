@@ -33,7 +33,7 @@ func TestProcessSubscriptions_GeneratesOrder(t *testing.T) {
 
 	// 3. Action: Run the Worker Logic Manually
 	// (We export ProcessSubscriptions in worker.go for this exact reason)
-	worker.processSubscriptions()
+	worker.ProcessSubscriptions()
 
 	// 4. Assertions
 	var order models.Order
