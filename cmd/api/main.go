@@ -4,6 +4,7 @@ import (
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/handlers"
 	"hobby-loop/m/internal/worker"
+	"hobby-loop/m/internal/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,6 +12,7 @@ import (
 func main() {
 	// Connect to the database
 	database.Connect()
+	database.DB.AutoMigrate(&models.Address{})
 
 	// Start the background worker
 	worker.Start()
@@ -26,6 +28,8 @@ func main() {
 		}
 		c.JSON(200, gin.H{"status": "alive", "database": "connected"})
 	})
+
+	router.POST("/register", handlers.RegisterUser)
 
 	router.POST("/baskets", handlers.CreateBasket)
 

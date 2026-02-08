@@ -22,29 +22,42 @@ func processSubscriptions() {
 	now := time.Now()
 
 	// Find subscriptions with next delivery date due
-	result := database.DB.Where("next_delivery_date <= ? AND status = ?", now, "active").Find(&subs)
-	if result.Error != nil {
-		log.Println("Worker error: ", result.Error)
-		return
-	}
-
-	if len (subs) > 0 {
-		log.Printf("Worker: Found %d subscriptions to process\n", len(subs))
-	}
+	database.DB.Where("next_delivery_date <= ? AND status = ?", now, "active").Find(&subs)
 
 	for _, sub := range subs {
-		// Create order for each subscription
+		// Fetch basket details
+		var basket models.Basket
+		database.DB.First(&basket, sub.BasketID)
+		
+		// Create order
 		order := models.Order{
 			SubscriptionID: sub.ID,
-			AmountPaid:     0.0, // This should be set based on basket price
-			Status:         "pending_delivery",
+			AmountPaid:     basket.Price,
+			Status:         "processing_payment",
 		}
 		database.DB.Create(&order)
 
-		// Update next delivery date (for simplicity, adding 30 days)
-		sub.NextDeliveryDate = sub.NextDeliveryDate.AddDate(0, 0, 30)
-		database.DB.Save(&sub)
+		// Simulate payment processing (replace with real payment logic)
+		go emitInvoice(order.ID)
 
-		log.Printf("Worker: Created order %d for subscription %d\n", order.ID, sub.ID)
+		// Update next delivery date based on basket interval
+		sub.NextDeliveryDate = calculateNextDeliveryDate(sub.NextDeliveryDate, basket.Interval)
+		database.DB.Save(&sub)
 	}
+}
+
+func emitInvoice(orderID uint) {
+	// Simulate delay for invoice emission
+	time.Sleep(5 * time.Second)
+	
+	var order models.Order
+	database.DB.First(&order, orderID)
+
+	// Simulate invoice details
+	order.InvoiceKey = "35231212345678000199550010000000011000000000"
+	order.InvoiceURL = "https://invoices.example.com/" + order.InvoiceKey
+	order.Status = "paid_and_invoiced"
+	database.DB.Save(&order)
+
+	log.Printf("Invoice emitted for order %d: Key=%s, URL=%s", order.ID, order.InvoiceKey, order.InvoiceURL)
 }
