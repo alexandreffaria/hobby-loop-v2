@@ -14,6 +14,7 @@ import (
 )
 
 func SetupRouter() *gin.Engine {
+	gin.SetMode(gin.TestMode)
 	r := gin.Default()
 	r.POST("/register", handlers.RegisterUser)
 	return r
@@ -23,8 +24,8 @@ func TestRegisterUser(t *testing.T) {
 	// 1. Setup
 	database.Connect()
 	// Clean DB to avoid unique constraint errors
-	database.DB.Exec("DELETE FROM users")
 	database.DB.Exec("DELETE FROM addresses")
+	database.DB.Exec("DELETE FROM users")
 
 	router := SetupRouter()
 
@@ -41,8 +42,15 @@ func TestRegisterUser(t *testing.T) {
 				"password":      "123456",
 				"full_name":     "João da Silva",
 				"document_type": "CPF",
-				"document":      "12345678900", // A valid generated testing CPF
+				"document":      "09205193690",
 				"is_seller":     false,
+				"address": map[string]interface{}{
+					"street":   "Rua Teste",
+					"number":   "123",
+					"city":     "São Paulo",
+					"state":    "SP",
+					"zip_code": "01001-000",
+				},
 			},
 			expectedCode: 201,
 		},
@@ -53,11 +61,9 @@ func TestRegisterUser(t *testing.T) {
 				"password":      "123456",
 				"full_name":     "Bad CPF Guy",
 				"document_type": "CPF",
-				"document":      "11111111111", // Known invalid CPF
+				"document":      "12345678912",
 				"is_seller":     false,
 			},
-			// Note: This will only pass if you implemented the check in handlers/user.go!
-			// If it returns 201, it means your validation logic is missing.
 			expectedCode: 400,
 		},
 	}
@@ -71,7 +77,7 @@ func TestRegisterUser(t *testing.T) {
 
 			router.ServeHTTP(w, req)
 
-			assert.Equal(t, tt.expectedCode, w.Code)
+			assert.Equal(t, tt.expectedCode, w.Code, "Request failed. Response Body: %s", w.Body.String())
 		})
 	}
 }

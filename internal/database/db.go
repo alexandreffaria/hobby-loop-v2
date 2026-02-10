@@ -3,12 +3,16 @@ package database
 import (
 	"hobby-loop/m/internal/models"
 	"log"
+	"sync"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
+var (
+	DB   *gorm.DB
+	once sync.Once
+)
 
 func Connect() {
 	// in prod use os.Getenv("DNS")
@@ -21,7 +25,7 @@ func Connect() {
 	}
 
 	// Auto migration
-	DB.AutoMigrate(&models.User{}, &models.Basket{}, &models.Subscription{}, &models.Order{})
+	DB.AutoMigrate(&models.User{}, &models.Basket{}, &models.Subscription{}, &models.Order{}, &models.Address{})
 
 	log.Println("Database connected and migrated.")
 
