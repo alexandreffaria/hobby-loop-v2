@@ -12,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -20,9 +21,11 @@ func main() {
 	slog.SetDefault(logger)
 
 	// Connect to the database
+	if err := godotenv.Load(); err != nil {
+		slog.Warn("No .env file found, relying on system environment variables")
+	}
 	database.Connect()
-	database.DB.AutoMigrate(&models.Address{})
-
+	database.DB.AutoMigrate(&models.User{}, &models.Basket{}, &models.Subscription{}, &models.Order{}, &models.Address{})
 	// Start the background worker
 	worker.Start()
 
