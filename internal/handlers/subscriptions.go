@@ -42,7 +42,7 @@ func SubscribeToBasket(c *gin.Context) {
 
 func CancelSubscription(c *gin.Context) {
 	id := c.Param("id")
-	
+
 	// FIX: Explicitly cast the float64 claim from JWT to uint
 	val, exists := c.Get("user_id")
 	if !exists {

@@ -175,6 +175,6 @@ func TestTheMarketplaceFlow(t *testing.T) {
 
 	// Count orders again - should STILL be 1, not 2
 	var finalOrderCount int64
-database.DB.Model(&models.Order{}).Where("subscription_id = ?", subToCancel.ID).Count(&finalOrderCount)
+	database.DB.Model(&models.Order{}).Where("subscription_id = ?", subToCancel.ID).Count(&finalOrderCount)
 	assert.Equal(t, int64(1), finalOrderCount, "Worker should not have created a new order for a cancelled subscription")
 }
