@@ -20,6 +20,7 @@ func TestCreateUser(t *testing.T) {
 
 	database.DB.Exec("DELETE FROM orders")
 	database.DB.Exec("DELETE FROM subscriptions")
+	database.DB.Exec("DELETE FROM addresses")
 	database.DB.Exec("DELETE FROM users")
 
 	user := models.User{

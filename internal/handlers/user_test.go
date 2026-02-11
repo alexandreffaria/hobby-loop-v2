@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -22,8 +23,16 @@ func SetupRouter() *gin.Engine {
 
 func TestRegisterUser(t *testing.T) {
 	// 1. Setup
+	os.Setenv("DB_HOST", "localhost")
+	os.Setenv("DB_USER", "postgres")
+	os.Setenv("DB_PASSWORD", "postgres")
+	os.Setenv("DB_NAME", "market")
+	os.Setenv("DB_PORT", "5432")
+	os.Setenv("DB_SSL", "disable")
 	database.Connect()
 	// Clean DB to avoid unique constraint errors
+	database.DB.Exec("DELETE FROM orders")
+	database.DB.Exec("DELETE FROM subscriptions")
 	database.DB.Exec("DELETE FROM addresses")
 	database.DB.Exec("DELETE FROM users")
 
