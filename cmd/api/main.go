@@ -63,6 +63,8 @@ func main() {
 
 		protected.GET("/orders", handlers.GetOrders)
 		protected.PATCH("/orders/:id", handlers.UpdateOrderStatus)
+
+		protected.GET("/seller/dashboard", handlers.GetSellerDashboard)
 	}
 
 	// Start the server
