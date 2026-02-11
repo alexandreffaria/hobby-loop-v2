@@ -10,8 +10,8 @@ import (
 
 func GetOrders(c *gin.Context) {
 
-	userID := c.MustGet("userID").(float64)
-	isSeller := c.MustGet("isSeller").(bool)
+	userID := c.MustGet("user_id").(float64)
+	isSeller := c.MustGet("is_seller").(bool)
 
 	var orders []models.Order
 
@@ -39,7 +39,7 @@ func GetOrders(c *gin.Context) {
 
 func UpdateOrderStatus(c *gin.Context) {
 	id := c.Param("id")
-	userID := c.MustGet("userID").(float64)
+	userID := c.MustGet("user_id").(float64)
 
 	var input struct {
 		Status string `json:"status" binding:"required"`
@@ -64,3 +64,4 @@ func UpdateOrderStatus(c *gin.Context) {
 	database.DB.Save(&order)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Order status updated successfully"})
+}
