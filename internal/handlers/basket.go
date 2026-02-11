@@ -25,3 +25,21 @@ func CreateBasket(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, input)
 }
+
+func ListBaskets(c *gin.Context) {
+	var baskets []models.Basket
+
+	query := database.DB.Where("active = ?", true)
+
+	search := c.Query("search")
+	if search != "" {
+		query = query.Where("name ILIKE ?", "%"+search+"%")
+	}
+
+	if result := query.Find(&baskets); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, baskets)
+}

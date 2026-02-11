@@ -56,9 +56,13 @@ func main() {
 	protected := router.Group("/")
 	protected.Use(AuthMiddleware())
 	{
+		protected.GET("/baskets", handlers.ListBaskets)
 		protected.POST("/baskets", handlers.CreateBasket)
+
 		protected.POST("/subscriptions", handlers.SubscribeToBasket)
+		
 		protected.GET("/orders", handlers.GetOrders)
+		protected.PATCH("/orders/:id", handlers.UpdateOrderStatus)
 	}
 
 	// Start the server
