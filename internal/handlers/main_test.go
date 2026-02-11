@@ -1,10 +1,10 @@
 package handlers_test
 
 import (
+	"github.com/gin-gonic/gin"
 	"hobby-loop/m/internal/database"
 	"os"
 	"testing"
-    "github.com/gin-gonic/gin"
 )
 
 func TestMain(m *testing.M) {
@@ -17,8 +17,8 @@ func TestMain(m *testing.M) {
 	os.Setenv("DB_SSL", "disable")
 	os.Setenv("JWT_SECRET", "test-secret")
 
-    // Set Gin to Test Mode globally
-    gin.SetMode(gin.TestMode)
+	// Set Gin to Test Mode globally
+	gin.SetMode(gin.TestMode)
 
 	// 2. Connect Once
 	database.Connect()

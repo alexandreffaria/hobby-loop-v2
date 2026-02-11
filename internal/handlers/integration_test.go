@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -33,6 +34,7 @@ func SetupFullRouter() *gin.Engine {
 		protected.POST("/baskets", handlers.CreateBasket)
 		protected.GET("/baskets", handlers.ListBaskets)
 		protected.POST("/subscriptions", handlers.SubscribeToBasket)
+		protected.PATCH("/subscriptions/:id", handlers.CancelSubscription)
 		protected.GET("/orders", handlers.GetOrders)
 		protected.PATCH("/orders/:id", handlers.UpdateOrderStatus)
 	}
@@ -136,4 +138,43 @@ func TestTheMarketplaceFlow(t *testing.T) {
 	var finalOrder models.Order
 	database.DB.First(&finalOrder, orderID)
 	assert.Equal(t, "shipped", finalOrder.Status)
+
+	// STEP 7: Buyer Cancels Subscription
+	t.Log("Step 7: Buyer Cancels Subscription")
+
+	// Explicitly find the subscription for THIS buyer and THIS basket
+	var subToCancel models.Subscription
+	if err := database.DB.Where("user_id = ? AND basket_id = ?", buyer.ID, createdBasket.ID).First(&subToCancel).Error; err != nil {
+		t.Fatalf("Could not find subscription to cancel: %v", err)
+	}
+
+	w = httptest.NewRecorder()
+	req, _ = http.NewRequest("PATCH", fmt.Sprintf("/subscriptions/%d", subToCancel.ID), nil)
+	req.Header.Set("Authorization", buyerToken)
+	router.ServeHTTP(w, req)
+
+	// Check response body if it fails
+	if w.Code != 200 {
+		t.Logf("Response Body: %s", w.Body.String())
+	}
+	assert.Equal(t, 200, w.Code)
+
+	// Verify in DB
+	var cancelledSub models.Subscription
+	database.DB.First(&cancelledSub, subToCancel.ID)
+	assert.Equal(t, "cancelled", cancelledSub.Status)
+
+	// STEP 8: Verify Worker IGNORES it
+	t.Log("Step 8: Verify Worker ignores cancelled subscription")
+	// Reset the date to yesterday to trick the worker
+	cancelledSub.NextDeliveryDate = time.Now().AddDate(0, 0, -1)
+	database.DB.Save(&cancelledSub)
+
+	// Run worker again
+	worker.ProcessSubscriptions()
+
+	// Count orders again - should STILL be 1, not 2
+	var finalOrderCount int64
+database.DB.Model(&models.Order{}).Where("subscription_id = ?", subToCancel.ID).Count(&finalOrderCount)
+	assert.Equal(t, int64(1), finalOrderCount, "Worker should not have created a new order for a cancelled subscription")
 }

@@ -59,6 +59,7 @@ func main() {
 		protected.POST("/baskets", handlers.CreateBasket)
 
 		protected.POST("/subscriptions", handlers.SubscribeToBasket)
+		protected.DELETE("/subscriptions/:id", handlers.CancelSubscription)
 
 		protected.GET("/orders", handlers.GetOrders)
 		protected.PATCH("/orders/:id", handlers.UpdateOrderStatus)

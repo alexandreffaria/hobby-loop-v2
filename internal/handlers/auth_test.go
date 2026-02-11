@@ -19,10 +19,10 @@ import (
 
 func TestLogin(t *testing.T) {
 	// SILENCE THE NOISE: Don't print SQL errors for this test
-    // (We check for nil just in case, though TestMain fixes it)
-    if database.DB != nil {
-	    database.DB.Logger = logger.Default.LogMode(logger.Silent)
-    }
+	// (We check for nil just in case, though TestMain fixes it)
+	if database.DB != nil {
+		database.DB.Logger = logger.Default.LogMode(logger.Silent)
+	}
 
 	// Clean DB
 	database.DB.Exec("DELETE FROM orders")
