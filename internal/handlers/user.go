@@ -60,7 +60,7 @@ func RegisterUser(c *gin.Context) {
 	// Validate document
 	user := models.User{
 		Email:        input.Email,
-		Password:     string(hashedPassword), 
+		Password:     string(hashedPassword),
 		FullName:     input.FullName,
 		DocumentType: input.DocumentType,
 		Document:     cleanDocument,

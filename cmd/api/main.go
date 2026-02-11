@@ -5,8 +5,6 @@ import (
 	"hobby-loop/m/internal/handlers"
 	"hobby-loop/m/internal/models"
 	"hobby-loop/m/internal/worker"
-	"hobby-loop/m/internal/auth"
-	"hobby-loop/m/internal/handlers/middleware"
 
 	"log/slog"
 	"os"
@@ -55,13 +53,13 @@ func main() {
 	router.POST("/login", handlers.Login)
 
 	protected := router.Group("/")
-	protected.Use(AuthMiddleware())
+	protected.Use(handlers.AuthMiddleware())
 	{
 		protected.GET("/baskets", handlers.ListBaskets)
 		protected.POST("/baskets", handlers.CreateBasket)
 
 		protected.POST("/subscriptions", handlers.SubscribeToBasket)
-		
+
 		protected.GET("/orders", handlers.GetOrders)
 		protected.PATCH("/orders/:id", handlers.UpdateOrderStatus)
 	}
@@ -97,5 +95,3 @@ func RequestLogger(logger *slog.Logger) gin.HandlerFunc {
 		)
 	}
 }
-
-

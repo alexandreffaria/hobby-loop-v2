@@ -20,7 +20,7 @@ func GetOrders(c *gin.Context) {
 		Preload("Subscription.Basket").
 		Joins("JOIN subscriptions ON subscriptions.id = orders.subscription_id").
 		Joins("JOIN baskets ON baskets.id = subscriptions.basket_id")
-	
+
 	if isSeller {
 		query = query.Where("baskets.seller_id = ?", uint(userID))
 	} else {
@@ -54,7 +54,7 @@ func UpdateOrderStatus(c *gin.Context) {
 		Joins("JOIN baskets ON baskets.id = subscriptions.basket_id").
 		Where("orders.id = ? AND baskets.seller_id = ?", id, uint(userID)).
 		First(&order)
-		
+
 	if result.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found or you don't have permission to update it"})
 		return

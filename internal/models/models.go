@@ -44,9 +44,9 @@ type Basket struct {
 type Subscription struct {
 	gorm.Model
 	UserID           uint      `json:"user_id"`
-	User			 User      `json:"user"`
+	User             User      `json:"user"`
 	BasketID         uint      `json:"basket_id"`
-	Basket			 Basket    `json:"basket"`
+	Basket           Basket    `json:"basket"`
 	Status           string    `json:"status"`
 	NextDeliveryDate time.Time `json:"next_delivery_date"`
 }
@@ -54,10 +54,10 @@ type Subscription struct {
 // Order
 type Order struct {
 	gorm.Model
-	SubscriptionID uint    `json:"subscription_id"`
+	SubscriptionID uint         `json:"subscription_id"`
 	Subscription   Subscription `json:"subscription"`
-	AmountPaid     float64 `json:"amount_paid"`
-	Status         string  `json:"status"`
+	AmountPaid     float64      `json:"amount_paid"`
+	Status         string       `json:"status"`
 
 	InvoiceKey string `json:"invoice_key"` // Chave de acesso da nota fiscal
 	InvoiceURL string `json:"invoice_url"` // URL para consulta da nota fiscal

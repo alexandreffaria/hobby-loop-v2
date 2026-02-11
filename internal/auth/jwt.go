@@ -26,9 +26,9 @@ func ValidateToken(tokenString string) (jwt.MapClaims, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
 		}
-		return secretKey,nil
+		return secretKey, nil
 	})
-	
+
 	if err != nil {
 		return nil, err
 	}

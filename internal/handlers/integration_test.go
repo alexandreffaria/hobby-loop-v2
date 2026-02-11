@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"testing"
 	"os"
+	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -25,7 +25,7 @@ func SetupFullRouter() *gin.Engine {
 
 	// Public
 	r.POST("/register", handlers.RegisterUser)
-	
+
 	// Protected
 	protected := r.Group("/")
 	protected.Use(handlers.AuthMiddleware())
@@ -81,7 +81,7 @@ func TestTheMarketplaceFlow(t *testing.T) {
 	req.Header.Set("Authorization", sellerToken)
 	router.ServeHTTP(w, req)
 	assert.Equal(t, 201, w.Code)
-	
+
 	var createdBasket models.Basket
 	json.Unmarshal(w.Body.Bytes(), &createdBasket)
 	assert.NotZero(t, createdBasket.ID)
@@ -116,7 +116,7 @@ func TestTheMarketplaceFlow(t *testing.T) {
 	req.Header.Set("Authorization", buyerToken)
 	router.ServeHTTP(w, req)
 	assert.Equal(t, 200, w.Code)
-	
+
 	var buyerOrders []models.Order
 	json.Unmarshal(w.Body.Bytes(), &buyerOrders)
 	assert.Len(t, buyerOrders, 1)

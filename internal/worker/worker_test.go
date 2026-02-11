@@ -5,11 +5,19 @@ import (
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/models"
 	"hobby-loop/m/internal/worker" // Import the worker package
+	"os"
 	"testing"
 	"time"
 )
 
 func TestProcessSubscriptions_GeneratesOrder(t *testing.T) {
+	os.Setenv("DB_HOST", "localhost")
+	os.Setenv("DB_USER", "postgres")
+	os.Setenv("DB_PASSWORD", "postgres")
+	os.Setenv("DB_NAME", "market")
+	os.Setenv("DB_PORT", "5432")
+	os.Setenv("DB_SSL", "disable")
+
 	// 1. Setup
 	database.Connect()
 
@@ -17,8 +25,12 @@ func TestProcessSubscriptions_GeneratesOrder(t *testing.T) {
 	database.DB.Exec("DELETE FROM orders")
 	database.DB.Exec("DELETE FROM subscriptions")
 	database.DB.Exec("DELETE FROM baskets")
+	database.DB.Exec("DELETE FROM users")
 
 	// 2. Seed Data
+	user := models.User{Email: "worker_test@test.com", Password: "123"}
+	database.DB.Create(&user)
+
 	// We create a subscription that was due YESTERDAY
 	basket := models.Basket{Price: 50.00, Interval: "weekly", Active: true}
 	database.DB.Create(&basket)

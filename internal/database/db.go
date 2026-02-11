@@ -1,11 +1,11 @@
 package database
 
 import (
+	"fmt"
 	"hobby-loop/m/internal/models"
 	"log"
-	"sync"
 	"os"
-	"fmt"
+	"sync"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
