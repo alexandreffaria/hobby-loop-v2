@@ -51,3 +51,7 @@ docker-down:
 clean:
 	@echo "🧹 Cleaning up..."
 	rm -rf bin/
+
+fmt:
+	@echo "🎨 Formatting code..."
+	go fmt ./...
