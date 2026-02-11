@@ -5,6 +5,8 @@ import (
 	"hobby-loop/m/internal/models"
 	"log"
 	"time"
+	"os"
+	"strconv"
 )
 
 func Start() {
@@ -29,7 +31,16 @@ func ProcessSubscriptions() {
 		var basket models.Basket
 		database.DB.First(&basket, sub.BasketID)
 
-		fee := basket.Price * 0.1 // 10% platform fee
+		feePercentage := 0.1 // Default to 10%
+		if envFee := os.Getenv("PLATFORM_FEE"); envFee != "" {
+			if value, err := strconv.ParseFloat(envFee, 64); err == nil {
+				feePercentage = value
+			} else {
+				log.Printf("Invalid PLATFORM_FEE value: %s, using default 10%%", envFee)
+			}
+		}
+
+		fee := basket.Price * feePercentage
 		net := basket.Price - fee
 
 		// Create order

@@ -17,6 +17,7 @@ func TestProcessSubscriptions_GeneratesOrder(t *testing.T) {
 	os.Setenv("DB_NAME", "market")
 	os.Setenv("DB_PORT", "5432")
 	os.Setenv("DB_SSL", "disable")
+	os.Setenv("PLATFORM_FEE", "0.1") // Ensure fee is set for test
 
 	database.Connect()
 

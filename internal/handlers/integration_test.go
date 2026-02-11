@@ -50,6 +50,8 @@ func TestTheMarketplaceFlow(t *testing.T) {
 	os.Setenv("DB_PORT", "5432")
 	os.Setenv("DB_SSL", "disable")
 	os.Setenv("JWT_SECRET", "test-secret") // Needed for token generation!
+	os.Setenv("PLATFORM_FEE", "0.1") // Ensure fee is set for test
+
 	// 1. INFRASTRUCTURE SETUP
 	database.Connect()
 	// Clean slate
