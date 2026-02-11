@@ -57,7 +57,10 @@ type Order struct {
 	SubscriptionID uint         `json:"subscription_id"`
 	Subscription   Subscription `json:"subscription"`
 	AmountPaid     float64      `json:"amount_paid"`
-	Status         string       `json:"status"`
+	PlatformFee    float64      `json:"platform_fee"`
+	SellerNet      float64      `json:"seller_net"`
+
+	Status string `json:"status"`
 
 	InvoiceKey string `json:"invoice_key"` // Chave de acesso da nota fiscal
 	InvoiceURL string `json:"invoice_url"` // URL para consulta da nota fiscal

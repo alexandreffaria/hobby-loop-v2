@@ -122,7 +122,12 @@ func TestTheMarketplaceFlow(t *testing.T) {
 	var buyerOrders []models.Order
 	json.Unmarshal(w.Body.Bytes(), &buyerOrders)
 	assert.Len(t, buyerOrders, 1)
+
+	// NEW: Verify Financial Split
 	assert.Equal(t, 100.0, buyerOrders[0].AmountPaid)
+	assert.Equal(t, 10.0, buyerOrders[0].PlatformFee, "Platform should take 10%")
+	assert.Equal(t, 90.0, buyerOrders[0].SellerNet, "Seller should get 90%")
+
 	orderID := buyerOrders[0].ID
 
 	// STEP 6: Seller fulfills the Order

@@ -29,10 +29,15 @@ func ProcessSubscriptions() {
 		var basket models.Basket
 		database.DB.First(&basket, sub.BasketID)
 
+		fee := basket.Price * 0.1 // 10% platform fee
+		net := basket.Price - fee
+
 		// Create order
 		order := models.Order{
 			SubscriptionID: sub.ID,
 			AmountPaid:     basket.Price,
+			PlatformFee:    fee,
+			SellerNet:      net,
 			Status:         "processing_payment",
 		}
 		database.DB.Create(&order)
