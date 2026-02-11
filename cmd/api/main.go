@@ -5,6 +5,7 @@ import (
 	"hobby-loop/m/internal/handlers"
 	"hobby-loop/m/internal/models"
 	"hobby-loop/m/internal/worker"
+	"hobby-loop/m/internal/auth"
 
 	"log/slog"
 	"os"
@@ -50,12 +51,15 @@ func main() {
 	})
 
 	router.POST("/register", handlers.RegisterUser)
+	router.POST("/login", handlers.Login)
 
-	router.POST("/baskets", handlers.CreateBasket)
-
-	router.POST("/subscriptions", handlers.SubscribeToBasket)
-
-	router.GET("/orders", handlers.GetOrders)
+	protected := router.Group("/")
+	protected.Use(AuthMiddleware())
+	{
+		protected.POST("/baskets", handlers.CreateBasket)
+		protected.POST("/subscriptions", handlers.SubscribeToBasket)
+		protected.GET("/orders", handlers.GetOrders)
+	}
 
 	// Start the server
 	slog.Info("Starting server on :8080")
@@ -86,5 +90,27 @@ func RequestLogger(logger *slog.Logger) gin.HandlerFunc {
 			"ip", c.ClientIP(),
 			"request_id", requestID,
 		)
+	}
+}
+
+
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.GetHeader("Authorization")
+		if tokenString == "" {
+			c.JSON(401, gin.H{"error": "Authorization header missing"})
+			c.Abort()
+			return
+		}
+
+		claims, err := auth.ValidateToken(tokenString)
+		if err != nil {
+			c.AbortWithStatusJSON(401, gin.H{"error": "Invalid token"})
+			return
+		}
+
+		c.Set("user_id", claims["user_id"])
+		c.Set("is_seller", claims["is_seller"])
+		c.Next()
 	}
 }

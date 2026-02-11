@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/klassmann/cpfcnpj"
+	"golang.org/x/crypto/bcrypt"
 )
 
-// Input struct to match the JSON payload exactly
 type RegisterInput struct {
 	Email        string `json:"email" binding:"required"`
 	Password     string `json:"password" binding:"required"`
@@ -18,7 +18,6 @@ type RegisterInput struct {
 	Document     string `json:"document" binding:"required"`
 	IsSeller     bool   `json:"is_seller"`
 
-	// Nested Address struct
 	Address struct {
 		Street       string `json:"street"`
 		Number       string `json:"number"`
@@ -52,11 +51,16 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+
 	// Validate document
-	// Create User AND Address in one go
 	user := models.User{
 		Email:        input.Email,
-		Password:     input.Password, // In prod: hash this!
+		Password:     string(hashedPassword), 
 		FullName:     input.FullName,
 		DocumentType: input.DocumentType,
 		Document:     cleanDocument,
