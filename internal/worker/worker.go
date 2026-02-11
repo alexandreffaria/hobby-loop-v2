@@ -4,9 +4,9 @@ import (
 	"hobby-loop/m/internal/database"
 	"hobby-loop/m/internal/models"
 	"log"
-	"time"
 	"os"
 	"strconv"
+	"time"
 )
 
 func Start() {
@@ -49,33 +49,15 @@ func ProcessSubscriptions() {
 			AmountPaid:     basket.Price,
 			PlatformFee:    fee,
 			SellerNet:      net,
-			Status:         "processing_payment",
+			Status:         "pending_payment",
 		}
 		database.DB.Create(&order)
 
-		// Simulate payment processing (replace with real payment logic)
-		go emitInvoice(order.ID)
-
+		log.Printf("STUB: Order %d created. Status 'pending_payment'. Waiting for external payment event.", order.ID)
 		// Update next delivery date based on basket interval
 		sub.NextDeliveryDate = calculateNextDeliveryDate(sub.NextDeliveryDate, basket.Interval)
 		database.DB.Save(&sub)
 	}
-}
-
-func emitInvoice(orderID uint) {
-	// Simulate delay for invoice emission
-	time.Sleep(5 * time.Second)
-
-	var order models.Order
-	database.DB.First(&order, orderID)
-
-	// Simulate invoice details
-	order.InvoiceKey = "35231212345678000199550010000000011000000000"
-	order.InvoiceURL = "https://invoices.example.com/" + order.InvoiceKey
-	order.Status = "paid_and_invoiced"
-	database.DB.Save(&order)
-
-	log.Printf("Invoice emitted for order %d: Key=%s, URL=%s", order.ID, order.InvoiceKey, order.InvoiceURL)
 }
 
 func calculateNextDeliveryDate(current time.Time, interval string) time.Time {

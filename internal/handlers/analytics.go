@@ -8,7 +8,7 @@ import (
 )
 
 type SellerDashboardStats struct {
-	ActiveSubscribers int64 `json:"active_subscribers"`
+	ActiveSubscribers int64   `json:"active_subscribers"`
 	GrossRevenue      float64 `json:"gross_revenue"`
 	PlatformFees      float64 `json:"platform_fees"`
 	NetEarnings       float64 `json:"net_revenue"`

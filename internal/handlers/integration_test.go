@@ -50,8 +50,8 @@ func TestTheMarketplaceFlow(t *testing.T) {
 	os.Setenv("DB_NAME", "market")
 	os.Setenv("DB_PORT", "5432")
 	os.Setenv("DB_SSL", "disable")
-	os.Setenv("JWT_SECRET", "test-secret") 
-	os.Setenv("PLATFORM_FEE", "0.1") 
+	os.Setenv("JWT_SECRET", "test-secret")
+	os.Setenv("PLATFORM_FEE", "0.1")
 
 	// 1. INFRASTRUCTURE SETUP
 	database.Connect()
@@ -136,7 +136,7 @@ func TestTheMarketplaceFlow(t *testing.T) {
 
 	// --- NEW STEP: DASHBOARD CHECK ---
 	t.Log("Step 6.5: Verify Seller Dashboard")
-	
+
 	// Force order to "paid_and_invoiced" so dashboard picks it up (bypassing worker delay)
 	var ord models.Order
 	database.DB.First(&ord, orderID)
@@ -151,7 +151,7 @@ func TestTheMarketplaceFlow(t *testing.T) {
 
 	var stats handlers.SellerDashboardStats
 	json.Unmarshal(w.Body.Bytes(), &stats)
-	
+
 	assert.Equal(t, int64(1), stats.ActiveSubscribers, "Should have 1 active subscriber")
 	assert.Equal(t, 100.0, stats.GrossRevenue, "Gross revenue should be 100")
 	assert.Equal(t, 90.0, stats.NetEarnings, "Net earnings should be 90")

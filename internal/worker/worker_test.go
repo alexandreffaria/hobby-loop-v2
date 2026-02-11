@@ -52,7 +52,7 @@ func TestProcessSubscriptions_GeneratesOrder(t *testing.T) {
 
 	assert.NoError(t, result.Error, "Worker should have created an order")
 	assert.Equal(t, 50.00, order.AmountPaid)
-	assert.Equal(t, "processing_payment", order.Status)
+	assert.Equal(t, "pending_payment", order.Status)
 
 	var updatedSub models.Subscription
 	database.DB.First(&updatedSub, sub.ID)
