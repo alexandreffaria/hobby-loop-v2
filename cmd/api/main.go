@@ -34,6 +34,18 @@ func main() {
 	router.Use(gin.Recovery())
 	router.Use(RequestLogger(logger))
 
+	router.Use(func(c *gin.Context) {
+        c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
+        c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, PATCH")
+        c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+
+        if c.Request.Method == "OPTIONS" {
+            c.AbortWithStatus(204)
+            return
+        }
+        c.Next()
+    })
+
 	router.GET("/health", func(c *gin.Context) {
 		sqlDB, err := database.DB.DB()
 		if err != nil {
